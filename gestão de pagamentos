@@ -1,0 +1,121 @@
+import java.util.ArrayList;
+import java.util.List;
+
+class Paciente {
+    private String nome;
+    private boolean pagamentoPendente;
+
+    // Construtor
+    public Paciente(String nome, boolean pagamentoPendente) {
+        this.nome = nome;
+        this.pagamentoPendente = pagamentoPendente;
+    }
+
+    // Getters e Setters
+    public String getNome() {
+        return nome;
+    }
+
+    public boolean isPagamentoPendente() {
+        return pagamentoPendente;
+    }
+
+    public void setPagamentoPendente(boolean pagamentoPendente) {
+        this.pagamentoPendente = pagamentoPendente;
+    }
+}
+
+class ConsultaExame {
+    private String tipo;
+    private double valor;
+
+    // Construtor
+    public ConsultaExame(String tipo, double valor) {
+        this.tipo = tipo;
+        this.valor = valor;
+    }
+
+    // Getters e Setters
+    public String getTipo() {
+        return tipo;
+    }
+
+    public double getValor() {
+        return valor;
+    }
+}
+
+class SistemaGestaoPagamentos {
+    private List<Paciente> pacientes;
+    private List<ConsultaExame> consultas;
+
+    // Construtor
+    public SistemaGestaoPagamentos() {
+        pacientes = new ArrayList<>();
+        consultas = new ArrayList<>();
+    }
+
+    // Método para adicionar paciente
+    public void adicionarPaciente(String nome, boolean pagamentoPendente) {
+        pacientes.add(new Paciente(nome, pagamentoPendente));
+    }
+
+    // Método para adicionar consulta/exame
+    public void adicionarConsultaExame(String tipo, double valor) {
+        consultas.add(new ConsultaExame(tipo, valor));
+    }
+
+    // Método para agendar consulta/exame
+    public String agendarConsulta(Paciente paciente, ConsultaExame consulta) {
+        if (paciente.isPagamentoPendente()) {
+            return "Paciente " + paciente.getNome() + " possui pagamento pendente. Não pode agendar a consulta.";
+        } else {
+            return "Consulta " + consulta.getTipo() + " agendada com sucesso para o paciente " + paciente.getNome() + ".";
+        }
+    }
+
+    // Método para realizar pagamento
+    public String realizarPagamento(Paciente paciente) {
+        paciente.setPagamentoPendente(false);
+        return "Pagamento realizado com sucesso para o paciente " + paciente.getNome() + ".";
+    }
+
+    // Método para listar pacientes
+    public void listarPacientes() {
+        for (Paciente p : pacientes) {
+            System.out.println("Paciente: " + p.getNome() + " - Pagamento Pendente: " + (p.isPagamentoPendente() ? "Sim" : "Não"));
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        // Criar o sistema de gestão
+        SistemaGestaoPagamentos sistema = new SistemaGestaoPagamentos();
+
+        // Adicionar pacientes
+        sistema.adicionarPaciente("João Silva", true);
+        sistema.adicionarPaciente("Maria Oliveira", false);
+
+        // Adicionar consultas/exames
+        sistema.adicionarConsultaExame("Consulta Geral", 100.0);
+        sistema.adicionarConsultaExame("Exame de Sangue", 150.0);
+
+        // Listar pacientes
+        sistema.listarPacientes();
+
+        // Agendar consulta para pacientes
+        Paciente paciente1 = new Paciente("João Silva", true);
+        Paciente paciente2 = new Paciente("Maria Oliveira", false);
+        ConsultaExame consulta1 = new ConsultaExame("Consulta Geral", 100.0);
+
+        System.out.println(sistema.agendarConsulta(paciente1, consulta1)); // João tem pagamento pendente
+        System.out.println(sistema.agendarConsulta(paciente2, consulta1)); // Maria não tem pendência
+
+        // Realizar pagamento para João
+        System.out.println(sistema.realizarPagamento(paciente1)); // João pagou sua pendência
+
+        // Tentar agendar novamente para João
+        System.out.println(sistema.agendarConsulta(paciente1, consulta1)); // Agora João pode agendar
+    }
+}
